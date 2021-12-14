@@ -1,0 +1,31 @@
+{
+  "name": "plex-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "HOST=0.0.0.0 PORT=3333 nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "animate": "^1.0.0",
+    "aos": "^2.3.4",
+    "bootstrap": "^5.0.2",
+    "chart.js": "^2.9.4",
+    "core-js": "^3.15.1",
+    "hchs-vue-charts": "^1.2.8",
+    "metismenu": "^3.0.7",
+    "nuxt": "^2.15.7",
+    "vue-chartjs": "^3.5.1"
+  },
+  "devDependencies": {
+    "@nuxt/types": "~2.15.0",
+    "fibers": "^5.0.0",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.2.0",
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}
