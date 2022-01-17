@@ -16,12 +16,13 @@
                   <form role="form">
                     <label>Email</label>
                     <div class="mb-3">
-                      <input type="email" class="form-control" placeholder="Email" aria-label="Email"
+                      <input v-model="username" type="email" class="form-control" placeholder="Email" aria-label="Email"
                              aria-describedby="email-addon">
                     </div>
                     <label>Password</label>
                     <div class="mb-3">
-                      <input type="email" class="form-control" placeholder="Password" aria-label="Password"
+                      <input v-model="password" type="password" class="form-control" placeholder="Password"
+                             aria-label="Password"
                              aria-describedby="password-addon">
                     </div>
                     <div class="form-check form-switch">
@@ -29,7 +30,7 @@
                       <label class="form-check-label" for="rememberMe">Remember me</label>
                     </div>
                     <div class="text-center">
-                      <NuxtLink :to="{name: 'dashboard'}" type="button" class="btn bg-gradient-info w-100 mt-4 mb-0">
+                      <NuxtLink v-if="showLogin" :to="{name: 'dashboard'}" type="button" class="btn bg-gradient-info w-100 mt-4 mb-0">
                         Sign in
                       </NuxtLink>
                     </div>
@@ -53,7 +54,16 @@
 <script>
 export default {
   name: "index",
-  layout: 'empty'
+  layout: 'empty',
+  data: () => ({
+    username: '',
+    password: ''
+  }),
+  computed: {
+    showLogin() {
+      return this.username === 'admin' && this.password === 'admin';
+    }
+  }
 }
 </script>
 

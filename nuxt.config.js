@@ -47,9 +47,12 @@ export default {
 
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/toast',
   ],
 
-  axios: {},
+  axios: {
+    baseURL: 'https://sdp.foxapi.live/api/',
+  },
 
   build: {}
 }
