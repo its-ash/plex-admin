@@ -30,8 +30,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="user in users" class="machine-list" @click="$store.dispatch('showMachineListBox', user)">
-                  <td>
+                <tr v-for="user in users" class="machine-list">
+                  <td @click="$store.dispatch('showMachineListBox', user)">
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="mb-0 text-sm">{{ user.name }}</h6>
@@ -39,19 +39,22 @@
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td @click="$store.dispatch('showMachineListBox', user)">
                     <p class="text-xs font-weight-bold mb-0">{{ user.district }}</p>
                     <p class="text-xs text-secondary mb-0">{{ user.state }}</p>
                   </td>
-                  <td class="align-middle text-center text-sm">
+                  <td @click="$store.dispatch('showMachineListBox', user)" class="align-middle text-center text-sm">
                     <span class="badge badge-sm bg-gradient-success">{{ user.mobile }}</span>
                   </td>
                   <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
                   </td>
                   <td class="align-middle text-center">
-                    <button class="btn bg-gradient-primary m-0 p-1 btn-sm small">
+                    <button @click.capture="connectPLC(user)" class="btn bg-gradient-primary m-0 p-1 btn-sm small">
                       Connect
+                    </button>
+                    <button @click="disconnectPLC(user)" class="btn bg-gradient-danger m-0 p-1 btn-sm small">
+                      DisConnect
                     </button>
                   </td>
                 </tr>
@@ -76,6 +79,16 @@ export default {
       return this.$store.state.users.filter((user) => {
         return user.name.toLowerCase().includes(this.search.toLowerCase()) || user.mobile.includes(this.search);
       });
+    }
+  },
+  methods: {
+    connectPLC(user) {
+      this.$toast.success("Connected").goAway(3000);
+      window.connect(user.mobile);
+    },
+    disconnectPLC(user) {
+      this.$toast.success("Disconnected").goAway(3000);
+      window.disconnect(user.mobile);
     }
   },
   created() {

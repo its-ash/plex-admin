@@ -46,6 +46,11 @@ export default {
       host, port, username, password, reconnectPeriod: 1000
     });
 
+    client.publish("Vpm", "he");
+
+    window.connect = (id) => client.publish("Vpn/" + id, "true");
+    window.disconnect = (id) => client.publish("Vpn/" + id, "false")
+
     client.on("connect", () => {
       client.subscribe("Machine/#");
       client.subscribe("Ping/#");
