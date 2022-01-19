@@ -38,7 +38,7 @@ export default {
   },
   created() {
     const host = 'ws://plex-mqtt.foxapi.live';
-    const port = 9001;
+    const port = 9000;
     const username = "plex";
     const password = "Am434DsCaFQaNgHX";
 
