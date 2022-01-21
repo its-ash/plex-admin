@@ -14,7 +14,7 @@
             <li v-for="ip in IPs" :ref="ip"
                 class="list-group-item border-0 d-flex justify-content-between mb-2 border-radius-lg">
               <div class="d-flex justify-content-between align-content-between w-100">
-                <h6 class="mb-1 text-dark text-sm">{{ ip.ip }}</h6>
+                <h6 class="mb-1 text-dark text-sm">{{ ip.ip }} <strong>{{ ip.name }}</strong></h6>
                 <button @click="deleteMachine(ip.id)" class="btn btn-danger m-0 p-1 btn-sm small">
                   <small>remove</small>
                 </button>
@@ -29,7 +29,7 @@
               <option v-for="machine in machineList" :value="machine"> {{ machine }}</option>
             </select>
             <button type="submit" class="btn bg-gradient-dark w-75 my-4">Add New Ip</button>
-            <button class="btn bg-gradient-danger w-15 my-4 ps-2">✖</button>
+            <button @click="showAddIp=false" class="btn bg-gradient-danger w-15 my-4 ps-3">✖</button>
           </form>
         </div>
       </div>

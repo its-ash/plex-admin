@@ -6,6 +6,9 @@ export const state = () => ({
   MQTT_MACHINES: {},
   allMachines: [],
   selectedUser: '',
+  ping: {},
+  updateKey: '',
+  rawPing: {},
 })
 
 export const mutations = {
@@ -26,6 +29,14 @@ export const mutations = {
   },
   selectUser(state, value) {
     state.selectedUser = value;
+  },
+  setPing(state, {key, value, raw}) {
+    state.ping[key] = value;
+    state.updateKey = value;
+    state.rawPing[key] = raw;
+  },
+  setMqttMachines(state, {key, value}) {
+    state.MQTT_MACHINES[key] = value;
   },
 }
 
@@ -59,9 +70,14 @@ export const actions = ({
     });
   },
   updateMachine(context, data) {
-    console.log(data);
+    const key = data.topic.split("/")[1];
+    const value = data.data;
+    context.commit('setMqttMachines', {key, value});
   },
   updatePing(context, data) {
-    console.log(data);
+    console.log("Setting Ping");
+    const key = data.topic.split("/")[1];
+    const value = (new Date(data.data)).toString().substring(0, 24)
+    context.commit('setPing', {key, value, 'raw': data.data});
   },
 })

@@ -35,10 +35,11 @@ export default {
   mounted() {
     this.$store.dispatch('fetchUser');
     this.$store.dispatch('fetchMachine');
+    this.$store.dispatch('fetchAllMachine');
   },
   created() {
-    const host = 'ws://plex-mqtt.foxapi.live';
-    const port = 9000;
+    const host = 'wss://plex-mqtt.foxapi.live';
+    const port = 443;
     const username = "plex";
     const password = "Am434DsCaFQaNgHX";
 
@@ -46,7 +47,6 @@ export default {
       host, port, username, password, reconnectPeriod: 1000
     });
 
-    client.publish("Vpm", "he");
 
     window.connect = (id) => client.publish("Vpn/" + id, "true");
     window.disconnect = (id) => client.publish("Vpn/" + id, "false")
@@ -59,9 +59,9 @@ export default {
     client.on("message", (topic, message) => {
       const data = JSON.parse(message.toString());
       if (topic.includes("Machine")) {
-        this.$store.dispatch('updateMachine', data);
+        this.$store.dispatch('updateMachine', {topic, data});
       } else if (topic.includes("Ping")) {
-        this.$store.dispatch('updatePing', data);
+        this.$store.dispatch('updatePing', {topic, data});
       }
     });
   }

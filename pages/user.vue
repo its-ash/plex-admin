@@ -29,7 +29,7 @@
                   </th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody :key="updateKey">
                 <tr v-for="user in users" class="machine-list">
                   <td @click="$store.dispatch('showMachineListBox', user)">
                     <div class="d-flex px-2 py-1">
@@ -44,10 +44,13 @@
                     <p class="text-xs text-secondary mb-0">{{ user.state }}</p>
                   </td>
                   <td @click="$store.dispatch('showMachineListBox', user)" class="align-middle text-center text-sm">
-                    <span class="badge badge-sm bg-gradient-success">{{ user.mobile }}</span>
+                    <span class="badge badge-sm"
+                          :class="{'bg-gradient-success': isDeviceLive(user), 'bg-gradient-danger': !isDeviceLive(user)}">{{
+                        user.mobile
+                      }}</span>
                   </td>
                   <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                    <span class="text-secondary text-xs font-weight-bold">{{ ping[user.mobile] || "Loading" }}</span>
                   </td>
                   <td class="align-middle text-center">
                     <button @click.capture="connectPLC(user)" class="btn bg-gradient-primary m-0 p-1 btn-sm small">
@@ -79,9 +82,24 @@ export default {
       return this.$store.state.users.filter((user) => {
         return user.name.toLowerCase().includes(this.search.toLowerCase()) || user.mobile.includes(this.search);
       });
-    }
+    },
+    ping() {
+      return this.$store.state.ping;
+    },
+    updateKey() {
+      return this.$store.state.updateKey;
+    },
+    rawPing() {
+      return this.$store.state.rawPing;
+    },
   },
   methods: {
+    isDeviceLive(user) {
+      if (this.rawPing[user.mobile]) {
+        return (new Date(new Date().getTime()) - new Date(this.rawPing[user.mobile])) < 8000;
+      }
+      return false;
+    },
     connectPLC(user) {
       this.$toast.success("Connected").goAway(3000);
       window.connect(user.mobile);
@@ -89,7 +107,7 @@ export default {
     disconnectPLC(user) {
       this.$toast.success("Disconnected").goAway(3000);
       window.disconnect(user.mobile);
-    }
+    },
   },
   created() {
     this.$store.dispatch('fetchUser');
