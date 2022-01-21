@@ -51,7 +51,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://sdp.foxapi.live/api/',
+    baseURL: 'https://sdp.foxapi.live/api/',
   },
 
   build: {}
