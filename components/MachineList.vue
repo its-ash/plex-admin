@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="machine in user.machines" class="machine-list"
-                    @click="$store.dispatch('showMachineDetailBox')">
+                    @click="showMachineDetail(machine)">
                   <td>
                     <div class="d-flex px-2">
                       <div class="my-auto">
@@ -66,8 +66,16 @@ export default {
   name: "MachineList",
   computed: {
     ...mapState({
+      MQTT_MACHINES: state => state.MQTT_MACHINES,
       user: state => state.selectedUser,
     }),
+  },
+  methods:{
+    showMachineDetail(machine) {
+      this.$store.commit('setCurrentMachine', machine);
+      this.$store.commit('setCurrentMachineID', machine['ip'] + machine['user']);
+      this.$store.dispatch('showMachineDetailBox');
+    },
   },
   mounted() {
     window.addEventListener('keyup', (event) => {

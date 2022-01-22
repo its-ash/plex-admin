@@ -5,7 +5,11 @@
         <div class="card-header pb-0 px-3">
           <div class="row">
             <div class="col-md-6">
-              <h6 class="mb-0"><span class="text-primary">192.78.23.09</span> Machine's Detail</h6>
+              <h6 class="mb-0">
+                <span class="text-primary">
+                {{ machine.name }}
+               <strong class="text-secondary"> {{ machine.ip }}</strong>
+              </span> Machine's Detail</h6>
             </div>
             <div class="col-md-6 d-flex justify-content-end align-items-center">
               <i class="far fa-calendar-alt me-2"></i>
@@ -13,16 +17,17 @@
             </div>
           </div>
         </div>
-        <div class="card-body pt-4 p-3">
+        <div class="card-body pt-4 p-3" style="overflow: auto;max-height: 60vh;">
           <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Type</h6>
           <ul class="list-group">
-            <li v-for="item in list" class="list-group-item border-0 border-bottom-sm mb-2 d-flex justify-content-between p-0 ps-0">
+            <li v-for="item in list"
+                class="list-group-item border-0 border-bottom-sm mb-2 d-flex justify-content-between p-0 ps-0">
               <div class="d-flex align-items-center">
                 <div class="d-flex flex-column">
-                  <h6 class="mb-1 text-dark text-sm">{{item[0]}}</h6>
+                  <h6 class="mb-1 text-dark text-sm">{{ item[0] }}</h6>
                 </div>
               </div>
-              <div class="d-flex align-items-center text-primary font-weight-bold">{{item[1]}}</div>
+              <div class="d-flex align-items-center text-primary font-weight-bold">{{ item[1] }}</div>
             </li>
 
           </ul>
@@ -37,23 +42,34 @@
 <script>
 export default {
   name: "MachineDetail",
-  data:()=>({
-  }),
-  computed:{
-    list(){
-      return [
-        ['Machine Mode', 'Auto'],
-        ['Machine Status', 'Running'],
-        ["Fault Status", "Healthy"],
-        ["Total Production", 2300],
-        ["Today Production", 434],
-        ["Total Running Hours", 233],
-        ["Today Running Hours", 45],
-        ["Total Ideal Time", 76],
-        ["Today Idle Time", 65],
-        ["Total Energy Consumption", 4554],
-        ["Today Energy Consumption", 232],
-      ]
+  data: () => ({}),
+  computed: {
+    machine() {
+      return this.$store.state.currentMachine;
+    },
+    list() {
+      const data = this.$store.state.MQTT_MACHINES[this.$store.state.currentMachineID];
+      const dummy = [
+        ['Machine Mode', 'Loading..'],
+        ['Machine Status', 'Loading..'],
+        ["Fault Status", "Loading.."],
+        ["Total Production", "Loading.."],
+        ["Today Production", "Loading.."],
+        ["Total Running Hours", "Loading.."],
+        ["Today Running Hours", "Loading.."],
+        ["Total Ideal Time", "Loading.."],
+        ["Today Idle Time", "Loading.."],
+        ["Total Energy Consumption", "Loading.."],
+        ["Today Energy Consumption", "Loading.."],
+      ];
+      console.log(data);
+      if (data) {
+        let result = [];
+        for (const [key, value] of Object.entries(data)) {
+          result.push([key, value]);
+        }
+        return result;
+      } else return dummy;
     }
   },
   mounted() {

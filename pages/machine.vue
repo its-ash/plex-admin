@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="machine in machineList" class="machine-list"
-                    @click="$store.dispatch('showMachineDetailBox')">
+                    @click="showMachineDetail(machine)">
                   <td>
                     <div class="d-flex px-2">
                       <div class="my-auto">
@@ -41,7 +41,9 @@
                     <span class="badge badge-sm bg-gradient-danger">{{ machine.ip }}</span>
                   </td>
                   <!--                  <td class="text-center">-->
-                  <!--                    <h5 class="text-sm m-0 text-black-50">12:23 12-3-2021</h5>-->
+                  <!--                    <h5 class="text-sm m-0 text-black-50">-->
+                  <!--                      {{ MQTT_MACHINES[machine.ip+machine.user].CTSpeed }}-->
+                  <!--                    </h5>-->
                   <!--                  </td>-->
                   <td class="text-center">
                     <h6 class="m-0 text-black-50">{{
@@ -74,8 +76,16 @@ export default {
       return result;
     },
     ...mapState({
+      MQTT_MACHINES: state => state.MQTT_MACHINES,
       machineList: state => state.allMachines,
     })
+  },
+  methods: {
+    showMachineDetail(machine) {
+      this.$store.commit('setCurrentMachine', machine);
+      this.$store.commit('setCurrentMachineID', machine['ip'] + machine['user']);
+      this.$store.dispatch('showMachineDetailBox');
+    },
   },
   mounted() {
     this.$store.dispatch('fetchAllMachine');

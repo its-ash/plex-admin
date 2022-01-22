@@ -52,6 +52,7 @@ export default {
 
   axios: {
     baseURL: 'https://sdp.foxapi.live/api/',
+    // baseUrl: 'http://127.0.0.1:8000/api/'
   },
 
   build: {}

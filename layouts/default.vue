@@ -59,7 +59,7 @@ export default {
     client.on("message", (topic, message) => {
       const data = JSON.parse(message.toString());
       if (topic.includes("Machine")) {
-        this.$store.dispatch('updateMachine', {topic, data});
+        this.$store.dispatch('updateMachine', data);
       } else if (topic.includes("Ping")) {
         this.$store.dispatch('updatePing', {topic, data});
       }
