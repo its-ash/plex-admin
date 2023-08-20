@@ -1,14 +1,5 @@
 <template>
-  <div class="row justify-content-center">
-    <div class="col-12 m-3">
-      <div class="row">
-        <div class="col-3">
-          <div class="text-center">
-            <button @click="addUser" class="btn bg-gradient-dark w-100 my-4 mb-2">Add New User</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="row justify-content-center mt-5">
     <div v-if="addNewUser" class="col-md-4 col-11">
       <div class="card">
         <div class="card-body">
@@ -74,35 +65,39 @@
         </div>
       </div>
     </div>
-    <div class="col mx-4" :key="refreshKey">
+    <div class="col mx-4">
       <div class="card">
         <div class="card-header pb-0 px-3">
           <div class="row p-3">
             <div class="col-6">
-              <h6 class="mb-0">User Information</h6>
-            </div>
-            <div class="col-6 m-0">
-              <input v-model="search" class="form-control" placeholder="Search here" type="text">
+              <h6 class="mb-0">Machine Information</h6>
             </div>
           </div>
         </div>
         <div class="card-body p-3" style="max-height: 60vh; overflow-y: scroll">
           <ul class="list-group">
-            <li v-for="user in users" class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-              <div class="d-flex flex-column">
-                <h6 class="mb-3 text-sm">{{ user.name }}</h6>
-                <span class="mb-2 text-xs">Company Name: <span
-                  class="text-dark font-weight-bold ms-sm-2">{{ user.name }}</span></span>
-                <span class="mb-2 text-xs">Email Address: <span
-                  class="text-dark ms-sm-2 font-weight-bold">{{ user.email }}</span></span>
-                <span class="text-xs">Mobile Number: <span
-                  class="text-dark ms-sm-2 font-weight-bold">{{ user.mobile }}</span></span>
+            <li v-for="machine in machines"
+                class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg row">
+              <div class="col-12 d-flex flex-column">
+                <h6 class="mb-3 text-sm">{{ machine }}</h6>
               </div>
-              <div class="ms-auto text-end">
-                <a @click="deleteUser(user)" class="btn btn-link text-danger text-gradient px-3 mb-0" href="#"><i
-                  class="far fa-trash-alt me-2"></i>Delete</a>
-                <a @click="editUser(user)" class="btn btn-link text-dark px-3 mb-0" href="#"><i
-                  class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a>
+              <div class="col-12 row">
+                <div v-for="part in machineParts[machine]"
+                     class="col-auto row bg-warning rounded mx-2 align-content-center px-1">
+                  <div style="background-color: #ffeaab" class="col-auto rounded font-weight-bold">{{ part }}</div>
+                  <div class="col-auto cursor-pointer px-2" @click="deletePart(machine, part)">❌</div>
+                </div>
+                <div class="col-auto row bg-warning rounded mx-2 align-content-center px-0">
+                  <div class="col-auto px-1">
+                    <input v-model="newPartName[machine]" style="background-color: #ffeaab" placeholder="Add New Part"
+                           class="my-1 px-2 border-0 rounded"/>
+                  </div>
+                  <div
+                    @click="addNewPart(machine)"
+                    v-if="newPartName[machine]" class="col-auto cursor-pointer py-1 bg-success rounded text-white">
+                    Add New
+                  </div>
+                </div>
               </div>
             </li>
           </ul>
@@ -113,14 +108,12 @@
 </template>
 
 <script>
-import {city, states} from "~/util/cities";
 
 export default {
   name: "add-user",
   data: () => ({
     addNewUser: false,
     email: '',
-    states,
     cities: [],
     state: 'Select State',
     city: 'Select City',
@@ -128,73 +121,58 @@ export default {
     search: '',
     addText: 'Add User',
     refreshKey: 0,
+    machineParts: {},
+    newPartName: {},
   }),
   methods: {
-    addUser() {
-      this.addText = "Add User";
-      this.name = "";
-      this.email = "";
-      this.mobile = "";
-      this.state = "";
-      this.city = "";
-      this.addNewUser = true;
+    getAllParts() {
+      this.$fire.firestore
+        .collection('Parts')
+        .get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          this.$set(this.machineParts, doc.id, doc.data()?.parts ?? {});
+        });
+      });
     },
-    selectState(name, index) {
-      this.city = 'Select City';
-      this.cities = city[index + 1].split(" | ").map(x => x.trim());
-      this.state = name;
-    },
-    selectCity(name) {
-      this.city = name;
-    },
-    apiAddNewUser() {
-      this.addNewUser = false;
+    addNewPart(machine) {
       const payload = {
-        "mobile": this.mobile,
-        "name": this.name,
-        "state": this.state,
-        "city": this.city,
-        "email": this.email,
+        "parts": [...(this.machineParts[machine] ?? []), this.newPartName[machine]],
+        "type": machine,
       };
       this.$fire.firestore
-        .collection('User')
-        .doc(this.mobile)
+        .collection('Parts')
+        .doc(machine)
         .set(payload).then(() => {
-        this.$toast.success('User Updated successfully').goAway(2000);
-        this.$store.dispatch('updateUserList');
+        this.$set(this.newPartName, machine, '');
+        this.$toast.success('Parts Updated successfully').goAway(2000);
+        this.getAllParts();
       })
-
     },
-    deleteUser(user) {
-      const value = confirm("Are Want to Delete User " + user.name);
+    deletePart(machine, part) {
+      const value = confirm("Are Want to Delete Part " + part + " from " + machine);
       if (value) {
+        const payload = {
+          "parts": (this.machineParts[machine] ?? []).filter(x => x !== part),
+          "type": machine,
+        };
         this.$fire.firestore
-          .collection('User')
-          .doc(user.mobile)
-          .delete().then(() => {
-          this.$toast.success('User Deleted successfully').goAway(2000);
-          this.$store.dispatch('fetchUser');
+          .collection('Parts')
+          .doc(machine)
+          .set(payload).then(() => {
+          this.$toast.success('Parts Deleted successfully').goAway(2000);
+          this.getAllParts();
         })
       }
     },
-    editUser(user) {
-      this.addText = "Update";
-      this.addNewUser = true;
-      this.name = user.name;
-      this.email = user.email;
-      this.mobile = user.mobile;
-      this.state = user.state;
-      this.city = user.city;
-    },
+
   },
   computed: {
-    users() {
-      return this.$store.state.users.filter((user) => {
-        return user.name.toLowerCase().includes(this.search.toLowerCase()) || user.mobile.includes(this.search);
-      });
+    machines() {
+      return this.$store.state.machineTypes;
     }
   },
   mounted() {
+    this.getAllParts();
     this.$store.dispatch('fetchUser');
     setInterval(() => {
       this.refreshKey += 1;

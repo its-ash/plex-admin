@@ -36,23 +36,40 @@ export default {
   router: {
     linkActiveClass: '',
     linkExactActiveClass: 'active',
+    prefetchPayloads: true
   },
   plugins: [
     {src: '~/plugins/chart.js', mode: 'client'}
   ],
-
+  firebase: {
+    config: {
+      apiKey: "AIzaSyAQll97-_0yFhg4RoNzrRoz_mDca3vF_yY",
+      authDomain: "sdp-machines.firebaseapp.com",
+      databaseURL: "https://sdp-machines-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "sdp-machines",
+      storageBucket: "sdp-machines.appspot.com",
+      messagingSenderId: "1074546101131",
+      appId: "1:1074546101131:web:57eb2d4ef76c1d27b6fd8e",
+      measurementId: "G-WH2L80PD1G"
+    },
+    services: {
+      firestore: true,
+      functions: true,
+      storage: true,
+      database: true
+    }
+  },
   components: true,
-
   buildModules: [],
-
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/toast',
+    '@nuxtjs/firebase'
   ],
-
   axios: {
-    baseURL: 'https://sdp.foxapi.live/api/',
-    // baseUrl: 'http://127.0.0.1:8000/api/'
+    baseURL: 'https://test.foxapi.live',
+    proxyHeaders: false,
+    credentials: false
   },
 
   build: {}

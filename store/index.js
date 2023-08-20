@@ -3,15 +3,25 @@ export const state = () => ({
   showMachineListBox: false,
   users: [],
   machines: [],
-  MQTT_MACHINES: {},
-  allMachines: [],
   selectedUser: '',
   ping: {},
-  updateKey: '',
   rawPing: {},
   currentMachineID: "",
   currentMachine: {},
   currentUser: {},
+  vpnStatus: {},
+  machineTypes: [
+    "ALPHA-14",
+    "ALPHA-21",
+    "PILOT",
+    "JUMBO",
+    "RAPID PLUS 09",
+    "RAPID PLUS 12",
+    "RAPID PLUS 16",
+    "SJ-14",
+    "SJ-14 PLUS",
+    "SJ-21",
+  ],
 })
 
 export const mutations = {
@@ -50,9 +60,32 @@ export const mutations = {
   setCurrentUser(state, value) {
     state.currentUser = value;
   },
+  setVpnStatus(state, {user, status}) {
+    state.vpnStatus[user] = status;
+  }
 }
 
 export const actions = ({
+  updateUserList(context) {
+    this.$fire.firestore
+      .collection('User').get().then((res) => {
+      const users = [];
+      res.forEach(doc => {
+        users.push(doc.data());
+      })
+      context.commit('users', users);
+    });
+  },
+  updateMachineList(context) {
+    this.$fire.firestore
+      .collection('Machines').get().then((res) => {
+      const machines = [];
+      res.forEach(doc => {
+        machines.push(doc.data());
+      })
+      context.commit('machines', machines);
+    });
+  },
   showMachineDetailBox(context) {
     context.commit('machineDetailBoxState', true);
   },
@@ -86,7 +119,6 @@ export const actions = ({
     context.commit('setMqttMachines', {key, value: data});
   },
   updatePing(context, data) {
-    console.log("Setting Ping");
     const key = data.topic.split("/")[1];
     const value = (new Date(data.data)).toString().substring(0, 24)
     context.commit('setPing', {key, value, 'raw': data.data});

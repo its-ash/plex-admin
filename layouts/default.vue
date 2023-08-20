@@ -33,35 +33,42 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('fetchUser');
-    this.$store.dispatch('fetchMachine');
-    this.$store.dispatch('fetchAllMachine');
+    this.$store.dispatch('updateUserList');
+    this.$store.dispatch('updateMachineList');
+    // this.$store.dispatch('fetchMachine');
+    // this.$store.dispatch('fetchAllMachine');
   },
   created() {
-    const host = 'wss://plex-mqtt.foxapi.live';
-    const port = 443;
+    const host = 'https://plex-mqtt.foxapi.live';
+    const port = 9001;
     const username = "plex";
     const password = "Am434DsCaFQaNgHX";
 
     const client = mqtt.connect(host, {
-      host, port, username, password, reconnectPeriod: 1000
+      host, port, username, password, reconnectPeriod: 1000, protocol: "wss",
     });
 
 
-    window.connect = (id) => client.publish("Vpn/" + id, "true");
-    window.disconnect = (id) => client.publish("Vpn/" + id, "false")
+    window.connect = (id) => client.publish("Vpn/" + id, "true", {retain: true})
+    window.disconnect = (id) => client.publish("Vpn/" + id, "false", {retain: true})
 
     client.on("connect", () => {
       client.subscribe("Machine/#");
       client.subscribe("Ping/#");
+      client.subscribe("Vpn/#");
     });
 
     client.on("message", (topic, message) => {
       const data = JSON.parse(message.toString());
+      console.log(topic)
       if (topic.includes("Machine")) {
         this.$store.dispatch('updateMachine', data);
       } else if (topic.includes("Ping")) {
         this.$store.dispatch('updatePing', {topic, data});
+      } else if (topic.includes("Vpn")) {
+        const user = topic.split("/")[1];
+        const status = ['true', true].includes(data);
+        this.$store.commit('setVpnStatus', {user, status})
       }
     });
   }

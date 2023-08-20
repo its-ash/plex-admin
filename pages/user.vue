@@ -12,7 +12,7 @@
             </div>
 
           </div>
-          <div class="card-body px-0 pt-0 pb-2">
+          <div class="card-body px-0 pt-0 pb-2" :key="reloadKey">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
@@ -45,19 +45,21 @@
                   </td>
                   <td @click="$store.dispatch('showMachineListBox', user)" class="align-middle text-center text-sm">
                     <span class="badge badge-sm"
-                          :class="{'bg-gradient-success': isDeviceLive(user), 'bg-gradient-danger': !isDeviceLive(user)}">{{
-                        user.mobile
-                      }}</span>
+                          :class="{'bg-gradient-success': isDeviceLive(user), 'bg-gradient-danger': !isDeviceLive(user)}">
+                      {{ user.mobile }}
+                    </span>
                   </td>
                   <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ ping[user.mobile] || "Loading" }}</span>
                   </td>
                   <td class="align-middle text-center">
-                    <button @click.capture="connectPLC(user)" class="btn bg-gradient-primary m-0 p-1 btn-sm small">
-                      Connect
+                    <button v-if="vpnStatus[user.mobile]" @click="disconnectPLC(user)"
+                            class="btn bg-gradient-danger m-0 p-1 btn-sm small">
+                      Disconnect
                     </button>
-                    <button @click="disconnectPLC(user)" class="btn bg-gradient-danger m-0 p-1 btn-sm small">
-                      DisConnect
+                    <button v-else @click.capture="connectPLC(user)"
+                            class="btn bg-gradient-primary m-0 p-1 btn-sm small">
+                      Connect
                     </button>
                   </td>
                 </tr>
@@ -76,6 +78,7 @@ export default {
   name: "user",
   data: () => ({
     search: '',
+    reloadKey: 1,
   }),
   computed: {
     users() {
@@ -92,11 +95,14 @@ export default {
     rawPing() {
       return this.$store.state.rawPing;
     },
+    vpnStatus() {
+      return this.$store.state.vpnStatus;
+    },
   },
   methods: {
     isDeviceLive(user) {
       if (this.rawPing[user.mobile]) {
-        return (new Date(new Date().getTime()) - new Date(this.rawPing[user.mobile])) < 8000;
+        return (new Date(new Date().getTime()) - new Date(this.rawPing[user.mobile])) < 5000;
       }
       return false;
     },
@@ -110,6 +116,9 @@ export default {
     },
   },
   created() {
+    setInterval(() => {
+      this.reloadKey += 1;
+    }, 3000);
     this.$store.dispatch('fetchUser');
   }
 }

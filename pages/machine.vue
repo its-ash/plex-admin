@@ -46,9 +46,11 @@
                   <!--                    </h5>-->
                   <!--                  </td>-->
                   <td class="text-center">
-                    <h6 class="m-0 text-black-50">{{
+                    <h6 class="m-0 text-black-50">
+                      {{
                         users[machine.user] && users[machine.user].district
-                      }},{{ users[machine.user] && users[machine.user].state }}</h6>
+                      }},{{ users[machine.user] && users[machine.user].state }}
+                    </h6>
                   </td>
                 </tr>
                 </tbody>

@@ -34,7 +34,7 @@
         </div>
         <button class="btn btn-behance" @click="$store.dispatch('hideMachineDetailBox')">Close</button>
       </div>
-
+      <MachineDataChart></MachineDataChart>
     </div>
   </div>
 </template>
