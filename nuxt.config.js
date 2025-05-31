@@ -71,6 +71,7 @@ export default {
     proxyHeaders: false,
     credentials: false
   },
-  buildDir: 'docs',
-  build: {}
+  generate: {
+    dir: 'docs'
+  }
 }
