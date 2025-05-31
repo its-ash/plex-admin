@@ -21,7 +21,7 @@
     "hchs-vue-charts": "^1.2.8",
     "metismenu": "^3.0.7",
     "moment": "^2.29.4",
-    "mqtt": "^4.3.4",
+    "mqtt": "^4.3.8",
     "nuxt": "^2.15.7",
     "vue-chartjs": "^3.5.1",
     "vue-loading-skeleton": "^1.1.9",

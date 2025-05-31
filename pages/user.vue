@@ -21,7 +21,8 @@
                   <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status
                   </th>
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    Last
                     Ping
                   </th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -31,7 +32,8 @@
                 </thead>
                 <tbody :key="updateKey">
                 <tr v-for="user in users" class="machine-list">
-                  <td @click="$store.dispatch('showMachineListBox', user)">
+                  <!--                  @click="$store.dispatch('showMachineListBox', user)"-->
+                  <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="mb-0 text-sm">{{ user.name }}</h6>
@@ -39,18 +41,18 @@
                       </div>
                     </div>
                   </td>
-                  <td @click="$store.dispatch('showMachineListBox', user)">
+                  <td>
                     <p class="text-xs font-weight-bold mb-0">{{ user.district }}</p>
                     <p class="text-xs text-secondary mb-0">{{ user.state }}</p>
                   </td>
-                  <td @click="$store.dispatch('showMachineListBox', user)" class="align-middle text-center text-sm">
+                  <td class="align-middle text-center text-sm">
                     <span class="badge badge-sm"
                           :class="{'bg-gradient-success': isDeviceLive(user), 'bg-gradient-danger': !isDeviceLive(user)}">
                       {{ user.mobile }}
                     </span>
                   </td>
                   <td class="align-middle text-center">
-                    <span class="text-secondary text-xs font-weight-bold">{{ ping[user.mobile] || "Loading" }}</span>
+                    <span class="text-secondary text-xs font-weight-bold">{{ ping[user.mobile] || "No Data Available" }}</span>
                   </td>
                   <td class="align-middle text-center">
                     <button v-if="vpnStatus[user.mobile]" @click="disconnectPLC(user)"
@@ -102,7 +104,7 @@ export default {
   methods: {
     isDeviceLive(user) {
       if (this.rawPing[user.mobile]) {
-        return (new Date(new Date().getTime()) - new Date(this.rawPing[user.mobile])) < 5000;
+        return (new Date(new Date().getTime()) - new Date(this.rawPing[user.mobile])) < 100000;
       }
       return false;
     },
@@ -119,7 +121,6 @@ export default {
     setInterval(() => {
       this.reloadKey += 1;
     }, 3000);
-    this.$store.dispatch('fetchUser');
   }
 }
 </script>

@@ -173,7 +173,7 @@ export default {
           .doc(user.mobile)
           .delete().then(() => {
           this.$toast.success('User Deleted successfully').goAway(2000);
-          this.$store.dispatch('fetchUser');
+          this.$store.dispatch('updateUserList');
         })
       }
     },
@@ -195,7 +195,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('fetchUser');
+    this.$store.dispatch('updateUserList');
     setInterval(() => {
       this.refreshKey += 1;
     }, 2000)

@@ -83,13 +83,13 @@
               </div>
               <div class="col-12 row">
                 <div v-for="part in machineParts[machine]"
-                     class="col-auto row bg-warning rounded mx-2 align-content-center px-1">
+                     class="col-auto row bg-warning rounded mx-2 my-1 py-1 align-content-center px-1">
                   <div style="background-color: #ffeaab" class="col-auto rounded font-weight-bold">{{ part }}</div>
                   <div class="col-auto cursor-pointer px-2" @click="deletePart(machine, part)">❌</div>
                 </div>
                 <div class="col-auto row bg-warning rounded mx-2 align-content-center px-0">
-                  <div class="col-auto px-1">
-                    <input v-model="newPartName[machine]" style="background-color: #ffeaab" placeholder="Add New Part"
+                  <div class="col-auto px-2 py-0">
+                    <input v-model="newPartName[machine]" style="background-color: rgba(213,255,208,0.74)" placeholder="Add New Part"
                            class="my-1 px-2 border-0 rounded"/>
                   </div>
                   <div
@@ -173,7 +173,6 @@ export default {
   },
   mounted() {
     this.getAllParts();
-    this.$store.dispatch('fetchUser');
     setInterval(() => {
       this.refreshKey += 1;
     }, 2000)

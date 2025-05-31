@@ -6,7 +6,9 @@
     <Sidebar></Sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg">
       <Navbar></Navbar>
-      <nuxt/>
+      <keep-alive>
+        <nuxt/>
+      </keep-alive>
     </main>
   </div>
 </template>
@@ -40,12 +42,12 @@ export default {
   },
   created() {
     const host = 'https://plex-mqtt.foxapi.live';
-    const port = 9001;
+    const port = 443;
     const username = "plex";
     const password = "Am434DsCaFQaNgHX";
 
     const client = mqtt.connect(host, {
-      host, port, username, password, reconnectPeriod: 1000, protocol: "wss",
+      host, port, username, password, reconnectPeriod: 5000, protocol: "wss", clean: true,
     });
 
 
@@ -56,6 +58,18 @@ export default {
       client.subscribe("Machine/#");
       client.subscribe("Ping/#");
       client.subscribe("Vpn/#");
+    });
+
+    try {
+      client.stream.on("error", (error) => {
+        this.$toast.error("Please contact Support");
+      });
+    } catch (e) {
+      console.log(e)
+    }
+
+    client.on("error", (error) => {
+      this.$toast.error("Please contact Support");
     });
 
     client.on("message", (topic, message) => {

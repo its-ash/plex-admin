@@ -11,13 +11,11 @@ export const state = () => ({
   currentUser: {},
   vpnStatus: {},
   machineTypes: [
-    "ALPHA-14",
-    "ALPHA-21",
-    "PILOT",
+    "ALPHA-09",
+    "ALPHA-12",
+    "ALPHA-16",
     "JUMBO",
-    "RAPID PLUS 09",
-    "RAPID PLUS 12",
-    "RAPID PLUS 16",
+    "ALPHA-20",
     "SJ-14",
     "SJ-14 PLUS",
     "SJ-21",
@@ -98,11 +96,6 @@ export const actions = ({
   },
   hideMachineListBox(context) {
     context.commit('machineListBoxState', false);
-  },
-  fetchUser(context) {
-    this.$axios.$get('/user/').then((res) => {
-      context.commit('users', res);
-    });
   },
   fetchMachine(context) {
     this.$axios.$get('/machine-list').then((res) => {
